@@ -1,6 +1,5 @@
 
 
-
 load("/Users/karenyang/Downloads/samsungData.rda")
 str(samsungData)
 names(samsungData) <- tolower(names(samsungData))
