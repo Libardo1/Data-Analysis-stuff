@@ -1,0 +1,76 @@
+Karen Yang
+Title: Predicting Activity
+
+
+Introduction: 
+
+Understanding the relationship between activity and the variables that help to predict it holds tremendous value in terms of finding ways to increase movement to improve health, reduce medical costs, and time lost from work. Tracking activity is important for obtaining a baseline measurement prior to finding ways to improve it. Models and their features can be used to test which measurements predict activity with high accuracy. This data analysis tells the story of model and feature selections.
+
+To begin, which model predicts activity better? Is it random forest or Support Vector Machines (SVM)?  Also, which features are important in predicting activity? This study looks at these questions, using data from a previous experiment, namely “Human Activity Recognition Using Smartphone Dataset”[1]. The purpose of this study is to build a model that predicts what activity a subject is performing based on the quantitative measurements tracked from a Samsung phone.
+
+To discuss briefly the background of the previous experiment, two sensor signals, called accelerometer and gyroscope, were used to gauge acceleration and angular velocity as measured along x, y, and z axes, to capture movement. These sensors are contained within a Samsung Galaxy S II smartphone that was worn on the waist by 30 subjects who volunteered for the study. As these volunteers carried on within their daily routine, these sensors recorded measurements of their activity as classified as walking, walking up, walking down, sitting, standing, and laying [1]. Thus, the data obtained are used for the purpose of this data analysis. 
+
+
+Methods:
+
+Data Collection
+
+The data come from the “Human Activity Recognition Using Smartphones Data Set” at the UCI Machine Learning Repository: Center for Machine Learning and Intelligent Systems[1]. The entire data set consists of 7352 observations with 563 variables. The data were downloaded from the following website on February 27, 2013 using the R programming language [3]: https://spark-public.s3.amazonaws.com/dataanalysis/samsungData.rda. The raw data and study description can be viewed at this website: http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones[1]. 
+
+Exploratory Analysis
+
+Exploratory analysis was performed with use of tables and plots of the data. Exploratory analysis was used to (1) identify missing values, (2) verify the quality of the data, and (3) determine the models used in analysis relating the activity variable to the other identified variables [2].
+
+With 7352 observations and 563 variables in the downloaded dataset, there were no missing observations. For the outcome variable, called activity, there are six categories with the following levels: 1) laying; 2) sitting; 3) standing; 4) walking; 5) walking down; and 6) walking up. Using the table function, the most frequent activity in terms of count was laying with 1407 tallies. The least frequent activity was walking down with 986 tallies.  Sitting, standing, walking, and walking up had tallies of 1286, 1374, 1226, and 1073, each respectively. For the subject variable, there were 30 subjects with counts in the 300 to 400 tallies for each subject, individually. 
+
+In cleaning the data, minor changes were made.  I removed “,”, “.”, “%”, “\\”, “-“, “( “, and “)” from the variable names for better readability. Also, lower cases letters were used for uniformity in the variable names’ appearance. For the outcome variable, activity, I transformed the class of the data from character to factor for purpose of a multi-class analysis, which is standard practice for purposes of computation and analysis. 
+
+The downloaded dataset was split into three groups for data analysis: 1) the training data set; 2) the validation data set; and 3) the testing data set. Subjects 1,3,5,6,10,12,13,16,20, and 23 were assigned to the training data set, which totaled 2053 observations with 563 variables. Subjects 2,7,8,9,14,17,19,21,24, and 26 were assigned to the validation data set, which totaled 2440 observations and 563 variables. Subjects 4,11,15,18,22,25,27,28,29, and 30 were assigned to the testing data set, which totaled 2859 observations and 563 variables.  
+
+For preliminary data analysis, I ran two models, namely random forest and Support Vector Machine (SVM) with use of the training data set. Next, using the validation data set, I then tested and tuned the model.  I then compared the error rates to assess which model performed better at classification and, later, to determine which features were important in predicting the outcome.  Finally, I applied the better model with the identified important variables to the test data set and reported the final result.
+
+Statistical Modeling
+
+To relate the activity variable with the other variables, I first ran a random forest model because this model is best suited for large data set with several predictors without knowing beforehand which variables are the best features to use to tune the model. Also, the outcome variable is a factor variable with classes or levels, which is appropriate for this type of model. Model selection was performed on the basis of exploratory analysis to assess variable importance amongst 562 variables (excluding the subjects variable). This random forest modeling method looks at a large group of decision trees by bootstrapping. Bootstrapping is when you take a random sample of the original data with replacement, Groupings of trees are generated and the number of variables chosen at random is what determines the node splitting. Finally, an error rate can be calculated to determine accuracy in classification [4]. 
+
+I then ran a Support Vector Machine (SVM) model. Similar to random forest modeling, this model incorporates all features and does a global classification [5]. An error rate can be calculated and a table can be generated to see if the predicted values match the actual values in terms of classification. Finally, an error rate can be calculated to determine accuracy in classification [5]. 
+
+
+Results:
+
+Using the training data set to build the random forest model, the call to the function shows that 500 trees were generated and 23 variables were tried at each split. The out of bag error rate is 1.02%. The walking up class had no errors in classification.
+
+The plot in figure 1 shows that there were 11 variables that were influential in predicting activity. The range for the mean decrease in the Gini measurement is between 20 and 55. Gini measures how much this variable in the model reduces classification error [6]. For simplicity, I will refer to their variable names since a codebook does not exist to clearly define and describe them, each individually. For each of these “important” variables, I calculate the correlation with the activity variable as a cross validation to see what their magnitude (strength in relationship) looks like. We should expect medium to high correlations if these are truly the “important” variables that wield prediction power as identified by the random forest model [6]. 
+
+These 11 include: 1) tgravityacc.min.x (correlation=0.6365321); 2) angle.x.gravitymean (correlation=-0.6049978); 3) tgravityacc.energy.x (correlation=0.6318179); 4) tgravityacc.mean.x (correlation=0.6432291); 5) tgravityacc.max.x (correlation=0.6485595); 6) tgravityacc.max.y (correlation=-0.6850469); 7) tgravityacc.min.y(correlation=-0.695804); 8) angle.y.gravitymean (correlation=0.6662157); 9) tgravityacc.energy.y (correlation=-0.500473);10) tgravityacc.mean.y (correlation=-0.6927581); and 11) tbodyacc.max.x (correlation=0.8150434). These 11 variables made the cutoff as the most important based on the decision criterion that a natural break occurs at the mean decrease in Gini measurement at 20 as shown in figure 1. Overall, the correlations for these 11 are medium to high, ranging from 50% to 82%, thereby adding a cross validation that these, in fact, are important variables.
+
+Both models used the validation data set to obtain predicted values. With the exception of the subject variable, all the features were used in both models. The error rate for the random forest model was 0.1122951, roughly 11%, and for the SVM, the error rate was 0.1467213, roughly 15%. Clearly, the random forest model does a better job of prediction by 4%. 
+
+It is still worth it to briefly discuss the results of the SVM model. According to the Confusion Matrix, the overall SVM model statistics showed an accuracy of 0.8533, hence 85% (95% confidence interval of 0.8386 to 0.8571). Thus, it is a pretty good model.
+
+Based on the error rates alone, however, the random forest model is the better model. With this model selected, I next turn to model tuning. I use the validation data set to rerun the random forest model with the 11 important variables and to again check the error rate, which was 0.2057377, for the tuned model.  Recall that the initial random forest model had an error rate of roughly 11%. Thus, there is a difference of about 10% in error rate between using all of the features and only 11 of the features. The validation data set had more observations than the training data set and the increase in error rate could have been due to tuning the model to this smaller data set.  
+
+Next, I applied the tuned model, which uses only the 11 variables of importance, to the test data set. The call to the random forest function gives an out of bag error rate of 2.87% with 3 variables tried at each split. The error rate between the predicted values and the actual values of activity in the test data set is 0.1699895, which is a difference of 6% in comparison to the original random forest model with all the predictors except the subject variable. 
+
+Overall, the findings show that the random forest model was better than the SVM model in terms of having greater accuracy. By sorting the variable by importance, I was able to identify the most influential variables. Using the validation data set, I tuned the random forest model, using only the 11 important variables and arrived at an error rate of 21%, approximately 10% more than the original model. Applying the tuned model to the test data set, which was a separate and much larger data set, I obtained an error rate of roughly 17%, which is a difference of 6% compared to the original error rate with the unturned random forest model.
+Conclusions: 
+
+This study demonstrates that random forest or SVM modeling are appropriate in dealing with large data sets with lots of variables without a priori knowledge as to which features (variables) are appropriate to select as predictors. In this particular study, the error rate for the random forest model was lower than the SVM model by 4%.  Moreover, the random forest model proved powerful in that it was able to identify the features of importance that wield the greatest influence over the outcome variable. Excluding the subject variable, there were 11 variables of importance out of a total of 562 possible variables. In the tuned model applied to the testing data set, hence the final model, the error rate was 17%, which is a difference of 6% compared to the original model. 
+
+One speculation for this difference is that the data set for the testing data set was much larger than the training data set by 806 observations. The model identifying the 11 important variables used the training dataset so the model was tuned to that particular data set. The larger testing data set carries its own nuances and is distinct from the training data set.  As a result, the 6% error rate could capture these nuances. 
+
+
+References
+
+1. UCI Machine Learning Repository: Center for Machine Learning and Intelligent Systems. URL: http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones. Accessed 2/27/2013.
+
+2. Coursera: "Data Analysis". Online course given by Jeff Leek. The Johns Hopkins Bloomberg School of Public Health. Dates: 22.01.12-19.03.13. URL: https://www.coursera.org/course/dataanalysis.
+
+3. de Vries, Andrie, and Joris Meys. R for Dummies. John Wiley & Sons, 2012.
+
+4. Random Forests Leo Breiman and Adele Cutler. URL: http://www.stat.berkeley.edu/%7Ebreiman/RandomForests/cc_home.htm. Accessed 3/5/2013.
+
+5. Data Mining Algorithms in R/Classification/SVM. URL:  http://en.wikibooks.org/wiki/Data_Mining_Algorithms_In_R/Classification/SVM. Accessed 3/6/2013.
+
+6. Stackoverflow. R Random Forests Variable Importance. URL: http://stackoverflow.com/questions/736514/r-random-forests-variable-importance. Accessed 3/7/2013.
+
